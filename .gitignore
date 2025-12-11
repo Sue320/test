@@ -1,0 +1,23 @@
+# 数据库文件 (Database files)
+*.db
+
+# Python缓存文件 (Python cache files)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 虚拟环境 (Virtual environment)
+venv/
+env/
+ENV/
+
+# IDE配置文件 (IDE configuration files)
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统文件 (OS files)
+.DS_Store
+Thumbs.db
