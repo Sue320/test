@@ -4,6 +4,18 @@
 
 This is a simple Python database module implemented using SQLite, providing basic CRUD (Create, Read, Update, Delete) operations.
 
+## ⚠️ 安全警告 (Security Warning)
+
+**本模块仅用于教学和演示目的。在生产环境中使用数据库时，请注意以下安全事项：**
+
+**This module is for educational and demonstration purposes only. When using databases in production, please note:**
+
+- ✋ 始终验证和清理用户输入 (Always validate and sanitize user inputs)
+- ✋ 使用参数化查询防止SQL注入攻击 (Use parameterized queries to prevent SQL injection attacks)
+- ✋ 实施适当的访问控制和权限管理 (Implement proper access control and permission management)
+- ✋ 在生产环境中考虑使用ORM（如SQLAlchemy）(Consider using an ORM like SQLAlchemy in production)
+- ✋ 加密敏感数据 (Encrypt sensitive data)
+
 ## 功能特性 (Features)
 
 - ✅ 数据库连接管理 (Database connection management)

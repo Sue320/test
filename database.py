@@ -1,10 +1,24 @@
 """
 Python数据库模块 (Python Database Module)
 使用SQLite实现基本的数据库操作 (Basic database operations using SQLite)
+
+警告 (WARNING):
+本模块为教学示例，用于演示基本的数据库操作。
+在生产环境中使用时，请注意以下安全事项：
+1. 对用户输入进行严格验证
+2. 使用参数化查询防止SQL注入
+3. 实施适当的访问控制和权限管理
+
+This module is an educational example for demonstrating basic database operations.
+When using in production, please note the following security considerations:
+1. Strictly validate user inputs
+2. Use parameterized queries to prevent SQL injection
+3. Implement proper access control and permission management
 """
 
 import sqlite3
 import os
+import re
 from typing import List, Tuple, Optional, Any
 
 
@@ -21,6 +35,14 @@ class Database:
         self.db_name = db_name
         self.connection = None
         self.cursor = None
+    
+    @staticmethod
+    def _is_safe_identifier(identifier: str) -> bool:
+        """
+        验证标识符是否安全（仅包含字母、数字、下划线）
+        Validate if identifier is safe (contains only letters, numbers, underscores)
+        """
+        return bool(re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', identifier))
     
     def connect(self) -> None:
         """建立数据库连接 (Establish database connection)"""
@@ -45,7 +67,13 @@ class Database:
         Args:
             table_name: 表名 (Table name)
             columns: 列定义 (Column definitions)
+            
+        注意 (Note): 此方法不验证列定义的安全性。在生产环境中应使用ORM或严格验证输入。
+        This method does not validate column definitions for security. Use ORM or strict validation in production.
         """
+        if not self._is_safe_identifier(table_name):
+            raise ValueError(f"不安全的表名: {table_name} (Unsafe table name: {table_name})")
+        
         try:
             query = f"CREATE TABLE IF NOT EXISTS {table_name} ({columns})"
             self.cursor.execute(query)
@@ -64,6 +92,13 @@ class Database:
             columns: 列名元组 (Column names tuple)
             values: 值元组 (Values tuple)
         """
+        if not self._is_safe_identifier(table_name):
+            raise ValueError(f"不安全的表名: {table_name} (Unsafe table name: {table_name})")
+        
+        for col in columns:
+            if not self._is_safe_identifier(col):
+                raise ValueError(f"不安全的列名: {col} (Unsafe column name: {col})")
+        
         try:
             placeholders = ', '.join(['?' for _ in values])
             columns_str = ', '.join(columns)
@@ -86,7 +121,13 @@ class Database:
             
         Returns:
             查询结果列表 (Query result list)
+            
+        注意 (Note): 此方法为简化示例。生产环境应使用参数化查询。
+        This method is a simplified example. Use parameterized queries in production.
         """
+        if not self._is_safe_identifier(table_name):
+            raise ValueError(f"不安全的表名: {table_name} (Unsafe table name: {table_name})")
+        
         try:
             query = f"SELECT {columns} FROM {table_name}"
             if condition:
@@ -106,7 +147,13 @@ class Database:
             table_name: 表名 (Table name)
             set_clause: SET子句 (SET clause)
             condition: WHERE条件 (WHERE condition)
+            
+        警告 (WARNING): 此方法不使用参数化查询。仅用于受信任的输入。
+        This method does not use parameterized queries. Use only with trusted inputs.
         """
+        if not self._is_safe_identifier(table_name):
+            raise ValueError(f"不安全的表名: {table_name} (Unsafe table name: {table_name})")
+        
         try:
             query = f"UPDATE {table_name} SET {set_clause} WHERE {condition}"
             self.cursor.execute(query)
@@ -123,7 +170,13 @@ class Database:
         Args:
             table_name: 表名 (Table name)
             condition: WHERE条件 (WHERE condition)
+            
+        警告 (WARNING): 此方法不使用参数化查询。仅用于受信任的输入。
+        This method does not use parameterized queries. Use only with trusted inputs.
         """
+        if not self._is_safe_identifier(table_name):
+            raise ValueError(f"不安全的表名: {table_name} (Unsafe table name: {table_name})")
+        
         try:
             query = f"DELETE FROM {table_name} WHERE {condition}"
             self.cursor.execute(query)
@@ -143,6 +196,9 @@ class Database:
             
         Returns:
             查询结果（如果是SELECT语句） (Query results if SELECT statement)
+            
+        推荐 (RECOMMENDED): 使用params参数进行参数化查询以防止SQL注入。
+        Use the params parameter for parameterized queries to prevent SQL injection.
         """
         try:
             if params:
